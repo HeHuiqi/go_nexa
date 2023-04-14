@@ -1,0 +1,24 @@
+[
+    {
+        "mnenmonic": "same possible open entry elbow mimic border attend divorce supreme brain axis",
+        "path": "m/44'/29223'/0'/0/0",
+        "privateKey": "ad627d29a39db006d965ff72d6f72c8ce3d68f1908201f7a5aa00e6ed506cec3",
+        "publicKey": "025d7f7b8f84a82b657b8dea4372a9a724ce823345ab757b62bfacd0ebe3338290",
+        "address": "nexa:nqtsq5g5fhfxym60aq0rwg2959r027f9w7zgzvnc5z66lv3n",
+        "changePath": "m/44'/29223'/0'/1/0",
+        "changePrivateKey": "994872a1ab3d5514f9b6c14e3c5091332ad027d1f17f84a85b10abb41ce4ef15",
+        "changePublicKey": "03b761e7b45e7fb3e9470b329409729eefb97b40c2139c846624aee67fdbfcd43c",
+        "changeAddress": "nexa:nqtsq5g584hzhqa972yrredl3frc9p0pujkfz077m4sxkyc6"
+    },
+    {
+        "mnenmonic": "",
+        "path": "m/44'/29223'/0'/0/0",
+        "privateKey": "",
+        "publicKey": "",
+        "address": "",
+        "changePath": "m/44'/29223'/0'/1/0",
+        "changePrivateKey": "",
+        "changePublicKey": "",
+        "changeAddress": ""
+    }
+]
