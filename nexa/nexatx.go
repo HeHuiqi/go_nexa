@@ -216,9 +216,9 @@ func NexaTx(outpointHex string, outputIdx uint8, ouputBalance uint64, sequence u
 
 	sign := NexaSign(hashHex, privateKey)
 	println("sign:", sign)
-	// cde47ad66247351daa92597537989bf6902183c8cc974825f8023077f00637ef350df588341a110e693d3a766b796b74d09b3d0a8543ed1b538f94297b972b82
 
 	/*
+		https://spec.nexa.org/protocol/blockchain/transaction 交易结构
 
 		00 version
 		01 input_count
