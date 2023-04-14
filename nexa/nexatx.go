@@ -160,6 +160,7 @@ func FormatData(hexStr string) string {
 
 func TxTest() {
 	// https://explorer.nexa.org/tx/a744499844b2276b41a667d0efcead5ebfceb512b3c7dac7c4ca184acb552d5d
+	// outpointHex 是返回的utxo中的 outpoint 字段的值，不是txid
 	outpointHex := "b3c54b310ddf26bf6be55aed6459707b8934e41cf91114153c8a952f8077a594"
 	outputIdx := uint8(0)
 	ouputBalance := uint64(10000)
