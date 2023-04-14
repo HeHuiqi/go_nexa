@@ -239,8 +239,7 @@ func NexaTx(outpointHex string, outputIdx uint8, ouputBalance uint64, sequence u
 		01 output_type
 		df14000000000000 output_amount2
 		170051141129a5ec6501c423c686247dfe7f413b4ebf7449 output_script_pubkey2
-		f6dc03 locktime = blockHeight
-		00 sigtype
+		f6dc0300 locktime = blockHeight
 
 
 		00
@@ -262,8 +261,7 @@ func NexaTx(outpointHex string, outputIdx uint8, ouputBalance uint64, sequence u
 		01
 		df14000000000000
 		170051141129a5ec6501c423c686247dfe7f413b4ebf7449
-		f6dc03
-		00
+		f6dc0300
 
 	*/
 
