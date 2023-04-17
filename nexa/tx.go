@@ -285,7 +285,7 @@ func NexaTxHashTest() {
 	output1, _ := NexaNewOutput(1, uint64(0x4e20), "nexa:nqtsq5g5z3mtcfjyvz8essf9l49hsa0sv779j5acw6sdj4e8")
 	output2, _ := NexaNewOutput(1, uint64(0x0771), "nexa:nqtsq5g5zy56tmr9q8zz835xy37lul6p8d8t7azfpuz2gs4e")
 	outputs := []NexaOutput{*output1, *output2}
-	lockTime := uint32(253841)
+	lockTime := uint32(253841) //目前使用未来的一个区块高度
 	//signType = 0 表示 NexaSignTypeAll 一般都用这个
 	signType := uint8(0)
 
@@ -303,6 +303,7 @@ func NexaSignTxTest() {
 	output2, _ := NexaNewOutput(1, uint64(0x0771), "nexa:nqtsq5g5zy56tmr9q8zz835xy37lul6p8d8t7azfpuz2gs4e")
 	outputs := []NexaOutput{*output1, *output2}
 
+	//目前使用未来的一个区块高度
 	// lockTime := uint32(253841)
 	lockTime := uint32(253782)
 	signType := uint8(0)
