@@ -229,9 +229,10 @@ func NexaTxHash(inputs []NexaInputOutpoint, outputs []NexaOutput, lockTime uint3
 	return msgHash
 }
 func NexaSign(msgHash string, priHex string) (string, string) {
-	priBytes, _ := hex.DecodeString(priHex)
-	msgBytes, _ := hex.DecodeString(msgHash)
-	ret, pubHex := Signature(priBytes, msgBytes)
+	// priBytes, _ := hex.DecodeString(priHex)
+	// msgBytes, _ := hex.DecodeString(msgHash)
+	// ret, pubHex := Signature(priBytes, msgBytes)
+	ret, pubHex := SchnorrSignMessageHash(msgHash, priHex)
 	return ret, pubHex
 }
 func FormatSignRaw(signHex string, pubHex string) string {
