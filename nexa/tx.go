@@ -73,6 +73,7 @@ func TxOutPoint(preOutPointHex string, outIndex uint8) string {
 }
 
 type NexaInputOutpoint struct {
+	// outpointHex 是返回的utxo中的 outpoint 字段的值，不是txid
 	OutpointHex  string
 	OutputIdx    uint8
 	OutputAmount uint64
@@ -92,6 +93,26 @@ func NexaOuputSerialize(outputType uint8, outputAmount uint64, toAddress string)
 	ret := typeHex + amountHex + outputScpritHex
 	// println("NexaOuputSerialize:", ret)
 	return ret
+}
+func NexaScriptSerialize(signType uint8, scriptHex string) string {
+
+	// signType = 0 表示 NexaSignTypeAll
+	if signType == 0 {
+		// 02 len
+		//  Opcode.OP_FROMALTSTACK= 108 = 6c, Opcode.OP_CHECKSIGVERIFY= 173 = 0xad
+		return "026cad"
+	}
+	lenHex := Int8ToHexString(int8(len(scriptHex)/2 + 1))
+	return lenHex + scriptHex + "6cad"
+}
+func NexaP2PKTScriptSerializeSignTypeAll() string {
+	ret := NexaScriptSerialize(0, "")
+	println("NexaP2PKTScriptSerializeSignTypeAll:", ret)
+	return ret
+}
+
+func NeaxSignTypeAllHex() string {
+	return "00"
 }
 
 func NewInputOutpoint(outpointHex string, outputIdx uint8, ouputBalance uint64, sequence uint32) NexaInputOutpoint {
@@ -256,6 +277,7 @@ func NexaSignTx(inputs []NexaInputOutpoint, outputs []NexaOutput, lockTime uint3
 }
 
 func NexaTxHashTest() {
+	// 这里
 	input1 := NewInputOutpoint("b3c54b310ddf26bf6be55aed6459707b8934e41cf91114153c8a952f8077a594", 0, 10000, 0xfffffffe)
 	input2 := NewInputOutpoint("84f6adb5ad2b1af7ff3026d16843cc123fc260f2ab4c3cd75b2d20df1dc431e4", 0, 13000, 0xfffffffe)
 	inputs := []NexaInputOutpoint{input1, input2}
@@ -264,6 +286,7 @@ func NexaTxHashTest() {
 	output2, _ := NexaNewOutput(1, uint64(0x0771), "nexa:nqtsq5g5zy56tmr9q8zz835xy37lul6p8d8t7azfpuz2gs4e")
 	outputs := []NexaOutput{*output1, *output2}
 	lockTime := uint32(253841)
+	//signType = 0 表示 NexaSignTypeAll 一般都用这个
 	signType := uint8(0)
 
 	msgHash := NexaTxHash(inputs, outputs, lockTime, signType)
@@ -271,6 +294,7 @@ func NexaTxHashTest() {
 
 }
 func NexaSignTxTest() {
+	// outpointHex 是返回的utxo中的 outpoint 字段的值，不是txid
 	input1 := NewInputOutpoint("b3c54b310ddf26bf6be55aed6459707b8934e41cf91114153c8a952f8077a594", 0, 10000, 0xfffffffe)
 	input2 := NewInputOutpoint("84f6adb5ad2b1af7ff3026d16843cc123fc260f2ab4c3cd75b2d20df1dc431e4", 0, 13000, 0xfffffffe)
 	inputs := []NexaInputOutpoint{input1, input2}

@@ -1,4 +1,9 @@
 
+
+
+官方文档 https://spec.nexa.org/protocol/blockchain/transaction 
+
+
 ## Tx hash raw 格式
 ```
 00 version
@@ -13,6 +18,7 @@ c992651ac89a97aecd0811c1761915a8e2c8f5153d1bdd994a789e6bd86ab717 inputsSequenceH
 
 
 ## 多个utxo的签名交易格式
+
 ```
 00 version
 02 input_count

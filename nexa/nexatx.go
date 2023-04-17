@@ -48,27 +48,6 @@ func NexaOuputsHash(ouputsHex string) string {
 	return ret
 }
 
-func NexaScriptSerialize(signType uint8, scriptHex string) string {
-
-	// signType = 0 表示 NexaSignTypeAll
-	if signType == 0 {
-		// 02 len
-		//  Opcode.OP_FROMALTSTACK= 108 = 6c, Opcode.OP_CHECKSIGVERIFY= 173 = 0xad
-		return "026cad"
-	}
-	lenHex := Int8ToHexString(int8(len(scriptHex)/2 + 1))
-	return lenHex + scriptHex + "6cad"
-}
-func NexaP2PKTScriptSerializeSignTypeAll() string {
-	ret := NexaScriptSerialize(0, "")
-	println("NexaP2PKTScriptSerializeSignTypeAll:", ret)
-	return ret
-}
-
-func NeaxSignTypeAllHex() string {
-	return "00"
-}
-
 func NexaTx(outpointHex string, outputIdx uint8, ouputBalance uint64, sequence uint32,
 	fromAddr string,
 	changeAddr string,
