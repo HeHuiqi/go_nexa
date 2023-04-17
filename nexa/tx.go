@@ -62,6 +62,7 @@ func TxDoubleHash256(hexStr string) string {
 	return hasResult
 }
 
+// index + preOutPointHex
 func TxOutPoint(preOutPointHex string, outIndex uint8) string {
 	utxoTxHash, _ := chainhash.NewHashFromStr(preOutPointHex)
 	wbuf := bytes.NewBuffer(make([]byte, 0, len(utxoTxHash)+2))
@@ -75,7 +76,7 @@ func TxOutPoint(preOutPointHex string, outIndex uint8) string {
 type NexaInputOutpoint struct {
 	// outpointHex 是返回的utxo中的 outpoint 字段的值，不是txid
 	OutpointHex  string
-	OutputIdx    uint8
+	InputType    uint8 //必须是0
 	OutputAmount uint64
 	Sequence     uint32
 }
@@ -115,13 +116,13 @@ func NeaxSignTypeAllHex() string {
 	return "00"
 }
 
-func NewInputOutpoint(outpointHex string, outputIdx uint8, ouputBalance uint64, sequence uint32) NexaInputOutpoint {
+func NewInputOutpoint(outpointHex string, inputType uint8, ouputBalance uint64, sequence uint32) NexaInputOutpoint {
 
-	return NexaInputOutpoint{OutpointHex: outpointHex, OutputIdx: outputIdx, OutputAmount: ouputBalance, Sequence: sequence}
+	return NexaInputOutpoint{OutpointHex: outpointHex, InputType: inputType, OutputAmount: ouputBalance, Sequence: sequence}
 }
 
 func (input *NexaInputOutpoint) ToHexString() string {
-	return TxOutPoint(input.OutpointHex, input.OutputIdx)
+	return TxOutPoint(input.OutpointHex, input.InputType)
 }
 
 func NexaInputsToHash(inputs []NexaInputOutpoint) string {
@@ -277,9 +278,10 @@ func NexaSignTx(inputs []NexaInputOutpoint, outputs []NexaOutput, lockTime uint3
 }
 
 func NexaTxHashTest() {
-	// 这里
-	input1 := NewInputOutpoint("b3c54b310ddf26bf6be55aed6459707b8934e41cf91114153c8a952f8077a594", 0, 10000, 0xfffffffe)
-	input2 := NewInputOutpoint("84f6adb5ad2b1af7ff3026d16843cc123fc260f2ab4c3cd75b2d20df1dc431e4", 0, 13000, 0xfffffffe)
+	//
+	inputType := uint8(0)
+	input1 := NewInputOutpoint("b3c54b310ddf26bf6be55aed6459707b8934e41cf91114153c8a952f8077a594", inputType, 10000, 0xfffffffe)
+	input2 := NewInputOutpoint("84f6adb5ad2b1af7ff3026d16843cc123fc260f2ab4c3cd75b2d20df1dc431e4", inputType, 13000, 0xfffffffe)
 	inputs := []NexaInputOutpoint{input1, input2}
 
 	output1, _ := NexaNewOutput(1, uint64(0x4e20), "nexa:nqtsq5g5z3mtcfjyvz8essf9l49hsa0sv779j5acw6sdj4e8")

@@ -23,7 +23,7 @@ c992651ac89a97aecd0811c1761915a8e2c8f5153d1bdd994a789e6bd86ab717 inputsSequenceH
 ```
 00 version
 02 input_count
-00 ouput_index_1
+00 outpoint_type1 必须是0
 94a577802f958a3c151411f91ce434897b705964ed5ae56bbf26df0d314bc5b3 reverse(outpoint_1)
 64 outpoint_sign_all_1
 2221 pubkey_all_len_1
@@ -33,7 +33,7 @@ c992651ac89a97aecd0811c1761915a8e2c8f5153d1bdd994a789e6bd86ab717 inputsSequenceH
 bec60d41b64ab42d9b1705112c2010aa9805ef1394f8e09ec77d0dac5c158c98 sign_s_1
 feffffff sequence_1
 1027000000000000  0x2710 = 10000 outpoint_amonut_1
-00 ouput_index_2
+00 00 outpoint_type2 必须是0
 e431c41ddf202d5bd73c4cabf260c23f12cc4368d12630fff71a2badb5adf684 reverse(outpoint_2)
 64 outpoint_sign_all_2
 2221 pubkey_all_len_2
