@@ -5,6 +5,8 @@
 * 根据 `accounts.json`中格式配置自己的账户信息
 
 
+官方文档
+https://spec.nexa.org/protocol/blockchain/transaction
 
 ## Tx hash raw 格式
 ```
