@@ -1,10 +1,3 @@
-# go_nexa
-
-测试准备
-* 将 `accounts_template.json` 文件重命名为 `accounts.json`
-* 根据 `accounts.json`中格式配置自己的账户信息
-
-
 
 ## Tx hash raw 格式
 ```
@@ -52,4 +45,3 @@ c832000000000000  0x32c8 = 130000  outpoint_amonut_2
 170051141129a5ec6501c423c686247dfe7f413b4ebf7449 output_script_pubkey2
 56df0300 locktime
 ```
-

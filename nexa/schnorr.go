@@ -114,13 +114,16 @@ H()：哈希函数。
 
 */
 
-func Signature(pri []byte, m []byte) string {
+// 返回签名和公钥
+func Signature(pri []byte, m []byte) (string, string) {
 	// P = G * k   P公钥 G椭圆曲线 k私钥
 	n := GetN()
 	// P = G*d // 就是由私钥匙获取公钥
 	// R = G*k // 同上
 
 	dPrivKey, P := btcec.PrivKeyFromBytes(pri)
+	dPubkeyBytes := P.SerializeCompressed()
+
 	println("dPrivKey:", dPrivKey.Key.String())
 
 	k := NonceFunctionRFC6979(pri, m)
@@ -135,7 +138,7 @@ func Signature(pri []byte, m []byte) string {
 
 	r := R.X()
 	// hash(r + p + m)
-	hashMessage := append(r.Bytes(), P.SerializeCompressed()...)
+	hashMessage := append(r.Bytes(), dPubkeyBytes...)
 	hashMessage = append(hashMessage, m...)
 	e0 := BigFromBytes(Hash256(hashMessage))
 
@@ -154,6 +157,6 @@ func Signature(pri []byte, m []byte) string {
 	sign := hexR + hexS
 
 	// println("sign:", sign)
-	return sign
+	return sign, hex.EncodeToString(dPubkeyBytes)
 
 }

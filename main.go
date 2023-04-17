@@ -7,8 +7,9 @@ import (
 
 func main() {
 	// NexaTest()
-
-	nexa.TxTest()
+	// nexa.TxTest()
+	// nexa.NexaTxHashTest()
+	nexa.NexaSignTxTest()
 
 }
 

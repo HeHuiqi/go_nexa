@@ -5,56 +5,9 @@ import (
 	"encoding/binary"
 	"encoding/hex"
 	"gonexa/account"
-
-	"github.com/gcash/bchd/chaincfg/chainhash"
 )
 
-func Int8ToHexString(intNum int8) string {
-	wbuf := bytes.NewBuffer(make([]byte, 0, 2))
-	binary.Write(wbuf, binary.BigEndian, intNum)
-	return hex.EncodeToString(wbuf.Bytes())
-}
-
-func Int8ToLittleEndianHexString(intNum int8) string {
-	wbuf := bytes.NewBuffer(make([]byte, 0, 2))
-	binary.Write(wbuf, binary.LittleEndian, intNum)
-	return hex.EncodeToString(wbuf.Bytes())
-}
-
-func TxVersion() string {
-	return "00"
-}
-
-func TxOutPoint(preOutPointHex string, outIndex uint8) string {
-	utxoTxHash, _ := chainhash.NewHashFromStr(preOutPointHex)
-	wbuf := bytes.NewBuffer(make([]byte, 0, len(utxoTxHash)+2))
-	binary.Write(wbuf, binary.LittleEndian, outIndex)
-	binary.Write(wbuf, binary.LittleEndian, utxoTxHash)
-	outPoint := hex.EncodeToString(wbuf.Bytes())
-	println("outPoint:", outPoint)
-	return outPoint
-}
-
-func TxAmountToLitteEndianHex(amount uint64) string {
-	wbuf := bytes.NewBuffer(make([]byte, 0, 8))
-	binary.Write(wbuf, binary.LittleEndian, amount)
-	amountStr := hex.EncodeToString(wbuf.Bytes())
-	// println("amountStr:", amountStr)
-	return amountStr
-}
-func Int32ToLitteEndianHex(num uint32) string {
-	wbuf := bytes.NewBuffer(make([]byte, 0, 4))
-	binary.Write(wbuf, binary.LittleEndian, num)
-	numStr := hex.EncodeToString(wbuf.Bytes())
-	// println("Int32ToLitteEndianHex:", numStr)
-	return numStr
-}
-
-func TxSequence() string {
-	// 0xfffffffe little end
-	return "feffffff"
-}
-
+// 已废弃
 func TxPrevOutHash(outPointHex string, inputIndex uint8) string {
 
 	outPoint := TxOutPoint(outPointHex, inputIndex)
@@ -75,35 +28,11 @@ func TxSequenceHash(sequence uint32) string {
 }
 
 func TxAmountHash(amount uint64) string {
-
 	amoutHex := TxAmountToLitteEndianHex(amount)
 	hasResult := TxDoubleHash256(amoutHex)
 	println("TxAmountHash:", hasResult)
 	return hasResult
 
-}
-
-func TxDoubleHash256(hexStr string) string {
-	sequenceBytes, _ := hex.DecodeString(hexStr)
-	doubleHash := chainhash.DoubleHashB(sequenceBytes)
-	hasResult := hex.EncodeToString(doubleHash)
-	return hasResult
-}
-
-func NexaP2KTScript(address string) (string, string) {
-	result, prefix, _, _ := CheckDecodeCashAddress(address)
-	ret := hex.EncodeToString(result)
-	// println(ret, prefix)
-	return ret, prefix
-}
-
-func NexaOuputSerialize(outputType uint8, outputAmount uint64, toAddress string) string {
-	typeHex := Int8ToHexString(int8(outputType))
-	outputScpritHex, _ := NexaP2KTScript(toAddress)
-	amountHex := TxAmountToLitteEndianHex(outputAmount)
-	ret := typeHex + amountHex + outputScpritHex
-	// println("NexaOuputSerialize:", ret)
-	return ret
 }
 
 func NexaOuputsSerialize(sendAmount uint64, toAddress string, changeAmount uint64, changeAddress string) string {
@@ -136,47 +65,8 @@ func NexaP2PKTScriptSerializeSignTypeAll() string {
 	return ret
 }
 
-func TxLocktime(blockHeght uint32) string {
-	ret := Int32ToLitteEndianHex(blockHeght)
-	println("TxLocktime:", ret)
-	return ret
-}
-func NeaxSinTypeAllHex() string {
+func NeaxSignTypeAllHex() string {
 	return "00"
-}
-
-func NexaSign(msgHash string, priHex string) string {
-	priBytes, _ := hex.DecodeString(priHex)
-	msgBytes, _ := hex.DecodeString(msgHash)
-	ret := Signature(priBytes, msgBytes)
-	return ret
-}
-
-func FormatData(hexStr string) string {
-	hexStrFormat := Int8ToHexString(int8(len(hexStr)/2)) + hexStr
-	// println("hexStrFormat:", hexStrFormat)
-	return hexStrFormat
-}
-
-func TxTest() {
-	// https://explorer.nexa.org/tx/a744499844b2276b41a667d0efcead5ebfceb512b3c7dac7c4ca184acb552d5d
-	// outpointHex 是返回的utxo中的 outpoint 字段的值，不是txid
-	outpointHex := "b3c54b310ddf26bf6be55aed6459707b8934e41cf91114153c8a952f8077a594"
-	outputIdx := uint8(0)
-	ouputBalance := uint64(10000)
-	sequence := 0xfffffffe
-	fromAccount := account.GetMainAccount()
-	changeAmount := uint64(0x14df)
-	// toAccount := account.GetAccount(1)
-	// toAddress := toAccount.Address
-	toAddress := "nexa:nqtsq5g5z3mtcfjyvz8essf9l49hsa0sv779j5acw6sdj4e8"
-	sendAmount := uint64(0x0fa0)
-	locktime := uint32(253174)
-
-	NexaTx(outpointHex, outputIdx, ouputBalance, uint32(sequence),
-		fromAccount.Address, fromAccount.ChangeAddress, changeAmount,
-		toAddress, sendAmount, locktime, fromAccount.PrivateKey, fromAccount.PublicKey)
-
 }
 
 func NexaTx(outpointHex string, outputIdx uint8, ouputBalance uint64, sequence uint32,
@@ -202,7 +92,7 @@ func NexaTx(outpointHex string, outputIdx uint8, ouputBalance uint64, sequence u
 
 	locktimeHex := TxLocktime(locktime)
 	hashBuf += locktimeHex
-	sinTypeHex := NeaxSinTypeAllHex()
+	sinTypeHex := NeaxSignTypeAllHex()
 	hashBuf += sinTypeHex
 
 	println("hashBuf:", hashBuf)
@@ -215,7 +105,7 @@ func NexaTx(outpointHex string, outputIdx uint8, ouputBalance uint64, sequence u
 	// reverseHashHex := hex.EncodeToString(reverseHashBytes)
 	// println("reverseHashHex=", reverseHashHex)
 
-	sign := NexaSign(hashHex, privateKey)
+	sign, _ := NexaSign(hashHex, privateKey)
 	println("sign:", sign)
 
 	/*
@@ -306,5 +196,26 @@ func NexaTx(outpointHex string, outputIdx uint8, ouputBalance uint64, sequence u
 	txRawStr += locktimeHex
 
 	println("txRawStr:", txRawStr)
+
+}
+
+func TxTest() {
+	// https://explorer.nexa.org/tx/a744499844b2276b41a667d0efcead5ebfceb512b3c7dac7c4ca184acb552d5d
+	// outpointHex 是返回的utxo中的 outpoint 字段的值，不是txid
+	outpointHex := "b3c54b310ddf26bf6be55aed6459707b8934e41cf91114153c8a952f8077a594"
+	outputIdx := uint8(0)
+	ouputBalance := uint64(10000)
+	sequence := 0xfffffffe
+	fromAccount := account.GetMainAccount()
+	changeAmount := uint64(0x14df)
+	// toAccount := account.GetAccount(1)
+	// toAddress := toAccount.Address
+	toAddress := "nexa:nqtsq5g5z3mtcfjyvz8essf9l49hsa0sv779j5acw6sdj4e8"
+	sendAmount := uint64(0x0fa0)
+	locktime := uint32(253174) // future block height
+
+	NexaTx(outpointHex, outputIdx, ouputBalance, uint32(sequence),
+		fromAccount.Address, fromAccount.ChangeAddress, changeAmount,
+		toAddress, sendAmount, locktime, fromAccount.PrivateKey, fromAccount.PublicKey)
 
 }
