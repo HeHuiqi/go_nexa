@@ -69,7 +69,7 @@ func MnemonicToPrivateKeyAndPublicKey(mnemonic string, path string, compress boo
 
 func NexaMnemonicToPrivateKeyAndPublicKey(mnemonic string) (string, string) {
 	path := "m/44'/29223'/0'/0/0" // receive address
-	// path = "m/44'/29223'/0'/1/0"  // change address
+	// path := "m/44'/29223'/0'/1/0" // change address
 	return MnemonicToPrivateKeyAndPublicKey(mnemonic, path, true)
 }
 
@@ -92,7 +92,7 @@ func NexaPublickeyToAddress(publickHex string) string {
 	format, _ := hex.DecodeString("17005114")
 	pubkeyDataH160 := append(format, btcutil.Hash160(pubkeyData)...)
 	// pubkeyDataH160, _ = hex.DecodeString("170051147c948439fe65e511b7737fe69be921d6531412be")
-	// println("pubkeyDataH160:", hex.EncodeToString(pubkeyDataH160))
+	println("pubkeyDataH160:", hex.EncodeToString(pubkeyDataH160))
 	nexaAddress := CheckEncodeCashAddress(pubkeyDataH160, prefix, SCRIPT_TEMPLATE_TYPE)
 	nexaAddress = prefix + ":" + nexaAddress
 	println("nexaAddress:", nexaAddress)

@@ -360,7 +360,7 @@ func CheckDecodeCashAddress(input string) (result []byte, prefix string, t Addre
 	if data[0] == 0x98 {
 		// 906939575071647610453cdf5110f0d61e898908
 		if len(data) != 25 {
-			return data, prefix, P2PKH, errors.New("Incorrect data length")
+			return data, prefix, SCRIPT_TEMPLATE_TYPE, errors.New("Incorrect data length")
 		}
 	} else {
 		// 98170051147c948439fe65e511b7737fe69be921d6531412be

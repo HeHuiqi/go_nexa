@@ -10,15 +10,6 @@ import (
 	"github.com/btcsuite/btcd/btcec/v2"
 )
 
-func HashReverse(inBytes []byte) []byte {
-	HashSize := len(inBytes)
-	dst := make([]byte, HashSize)
-	for i, b := range inBytes[:HashSize/2] {
-		dst[i], dst[HashSize-1-i] = inBytes[HashSize-1-i], b
-	}
-	return dst[:]
-}
-
 func Hash256(b []byte) []byte {
 	hash := sha256.Sum256(b)
 	return hash[:]

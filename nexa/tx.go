@@ -9,6 +9,15 @@ import (
 	"github.com/gcash/bchd/chaincfg/chainhash"
 )
 
+func HashReverse(inBytes []byte) []byte {
+	HashSize := len(inBytes)
+	dst := make([]byte, HashSize)
+	for i, b := range inBytes[:HashSize/2] {
+		dst[i], dst[HashSize-1-i] = inBytes[HashSize-1-i], b
+	}
+	return dst[:]
+}
+
 func TxVersion() string {
 	return "00"
 }
