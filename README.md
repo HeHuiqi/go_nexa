@@ -6,9 +6,53 @@
 
 
 官方文档
+https://spec.nexa.org/protocol/blockchain/transaction/transaction-signing
 https://spec.nexa.org/protocol/blockchain/transaction
 
+
+
+## Previous Outputs Hash 
+
+官方文档的描述是针对`bitcoincash`的描述
+
+```
+input_type = 00 必须是0
+pre_out_raw = input_type1 + reverse(pre_outpoint_hex1) + input_type2 + reverse(pre_outpoint_hex2) + ........
+previous_outputs_hash  = inputsHash = doubleSha256(pre_out_raw)
+```
+
+## inputsAmountHash
+```
+LE = littleEnd
+input_amount_raw = LE(amount1) + LE(amount2) + .....
+inputsAmountHash = doubleSha256(input_amount_raw)
+```
+## inputsSequenceHash
+```
+input_sequence_raw = LE(sequence1) + LE(sequence2) + ....
+inputsAmountHash = doubleSha256(input_sequence_raw)
+```
+
+## script
+```
+script = LE(len(script)) + script_pub_key
+当signtype == 0，即ALL时 script = 026cad
+
+```
+
+## outpusHash
+```
+output_type = 01 表示本币
+ouput_raw = output_type1 + LE(out_amount1) + script_pub_key1 
++ output_type2 + LE(out_amount2) + script_pub_key2 
++ ....
+outpusHash = doubleSha256(ouput_raw)
+```
+
+
+
 ## Tx hash raw 格式
+要按照如下顺序拼接，这和官方文档还是有出入的
 ```
 00 version
 b4b7bba1231afeee623d1b4c4a5bc556d190a9a1560b0cce4155389ccb382b38 inputsHash

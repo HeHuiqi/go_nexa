@@ -9,6 +9,16 @@ import (
 	"github.com/gcash/bchd/chaincfg/chainhash"
 )
 
+func HashReverseHex(hexStr string) []byte {
+	inBytes, _ := hex.DecodeString(hexStr)
+	HashSize := len(inBytes)
+	dst := make([]byte, HashSize)
+	for i, b := range inBytes[:HashSize/2] {
+		dst[i], dst[HashSize-1-i] = inBytes[HashSize-1-i], b
+	}
+	return dst[:]
+}
+
 func HashReverse(inBytes []byte) []byte {
 	HashSize := len(inBytes)
 	dst := make([]byte, HashSize)
@@ -305,6 +315,34 @@ func NexaTxHashTest() {
 	println("msgHash:", msgHash)
 
 }
+
+func NexaSignTxOneInputTest() {
+	// outpointHex 是返回的utxo中的 outpoint 字段的值，不是txid
+	inputType := uint8(0) //必须是0
+
+	inputAmount := uint64(112 * 100)
+	feeAmount := uint64(8 * 100)
+	sendAmount := uint64(10 * 100)
+	changeAmount := inputAmount - sendAmount - feeAmount
+	outpointHex := "d280317ac14ff9078bd7602314f9a96590de8da2c9c9fb5b921d96a58c3d7d75"
+	input1 := NewInputOutpoint(outpointHex, inputType, inputAmount, 0xfffffffe)
+	inputs := []NexaInputOutpoint{input1}
+
+	output1, _ := NexaNewOutput(1, sendAmount, "nexa:nqtsq5g5z3mtcfjyvz8essf9l49hsa0sv779j5acw6sdj4e8")
+	output2, _ := NexaNewOutput(1, changeAmount, "nexa:nqtsq5g50j2ggw07vhj3rdmn0lnfh6fp6ef3gy47qudau8mx")
+	outputs := []NexaOutput{*output1, *output2}
+
+	//目前使用未来的一个区块高度
+	// lockTime := uint32(253841)
+	lockTime := uint32(255899)
+	signType := uint8(0)
+	msgHash := NexaTxHash(inputs, outputs, lockTime, signType)
+
+	priHex := account.GetMainAccount().PrivateKey
+	signTxRaw := NexaSignTx(inputs, outputs, lockTime, msgHash, priHex)
+	println("signTxRaw:", signTxRaw)
+}
+
 func NexaSignTxTest() {
 	// outpointHex 是返回的utxo中的 outpoint 字段的值，不是txid
 	inputType := uint8(0) //必须是0
@@ -313,13 +351,13 @@ func NexaSignTxTest() {
 	input2 := NewInputOutpoint("84f6adb5ad2b1af7ff3026d16843cc123fc260f2ab4c3cd75b2d20df1dc431e4", inputType, 13000, 0xfffffffe)
 	inputs := []NexaInputOutpoint{input1, input2}
 
-	output1, _ := NexaNewOutput(1, uint64(0x4e20), "nexa:nqtsq5g5z3mtcfjyvz8essf9l49hsa0sv779j5acw6sdj4e8")
-	output2, _ := NexaNewOutput(1, uint64(0x0771), "nexa:nqtsq5g5zy56tmr9q8zz835xy37lul6p8d8t7azfpuz2gs4e")
+	output1, _ := NexaNewOutput(1, uint64(9000), "nexa:nqtsq5g5z3mtcfjyvz8essf9l49hsa0sv779j5acw6sdj4e8")
+	output2, _ := NexaNewOutput(1, uint64(13000), "nexa:nqtsq5g50j2ggw07vhj3rdmn0lnfh6fp6ef3gy47qudau8mx")
 	outputs := []NexaOutput{*output1, *output2}
 
 	//目前使用未来的一个区块高度
 	// lockTime := uint32(253841)
-	lockTime := uint32(253782)
+	lockTime := uint32(255219)
 	signType := uint8(0)
 	msgHash := NexaTxHash(inputs, outputs, lockTime, signType)
 
