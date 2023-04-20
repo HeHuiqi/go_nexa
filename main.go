@@ -9,10 +9,8 @@ func main() {
 	// NexaTest()
 	// nexa.TxTest()
 	// nexa.NexaTxHashTest()
-	nexa.NexaSignTxOneInputTest()
-	// nexa.NexaSignTxTest()
-	// nexa.TxID()
-
+	// nexa.NexaSignTxOneInputTest()
+	nexa.NexaSignTxTest()
 }
 
 func NexaTest() {

@@ -351,7 +351,6 @@ func NexaSignTxOneInputTest() {
 
 	//目前使用未来的一个区块高度
 	// lockTime := uint32(253841)
-	// 3c6746ede34e13dce746c049ca7ec53ce63d95bb8b9cfa43e7d8f8e1ae4501de
 	lockTime := uint32(255888)
 	// lockTime := uint32(255899)
 	signType := uint8(0)
@@ -388,4 +387,9 @@ func NexaSignTxTest() {
 	priHex := account.GetMainAccount().PrivateKey
 	signTxRaw := NexaSignTx(inputs, outputs, lockTime, msgHash, priHex)
 	println("signTxRaw:", signTxRaw)
+
+	txId, txIdem := NexaTxIdAndTxIdem(inputs, outputs, lockTime)
+	println("txId:", txId)
+	println("txIdem:", txIdem)
+
 }
