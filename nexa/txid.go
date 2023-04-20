@@ -70,9 +70,6 @@ func NexaTxIdAndTxIdem(inputs []NexaInputOutpoint, outputs []NexaOutput, lockTim
 
 /*
 
-"txid": "4a5733d194cd9572937b5ef766c35c631301430251f42d24ab343ec150478481",
-"txidem": "a87876c510a3823c041db9a04c6925014b8bd82a91862e721b4149d70d5a25c5",
-
 
 Transaction Idem Calculation
 Serialize the following transaction fields using standard bitcoin serialization algorithms:
