@@ -2,16 +2,16 @@ package nexa
 
 func NexaTxIdemHex(inputs []NexaInputOutpoint, outputs []NexaOutput, lockTime uint32) string {
 	txIdemHex := TxVersion()
-	inputCount := uint8(len(inputs))
-	txIdemHex += Int8ToLittleEndianHexString(inputCount)
-	for i := uint8(0); i < inputCount; i++ {
+	inputCount := uint64(len(inputs))
+	txIdemHex += VarIntToHex(inputCount)
+	for i := uint64(0); i < inputCount; i++ {
 		input := inputs[i]
 		txIdemHex += input.ToIdemHexString()
 	}
 
-	outputCount := uint8(len(outputs))
-	txIdemHex += Int8ToLittleEndianHexString(outputCount)
-	for i := uint8(0); i < outputCount; i++ {
+	outputCount := uint64(len(outputs))
+	txIdemHex += VarIntToHex(outputCount)
+	for i := uint64(0); i < outputCount; i++ {
 		output := outputs[i]
 		txIdemHex += output.ToHexString()
 	}
@@ -25,6 +25,7 @@ func NexaTxToSatisfierHex(inputs []NexaInputOutpoint) string {
 		input := inputs[i]
 		//输入的签名脚本
 		satisfierHex += input.SignatureScript
+		// Opcode.map.OP_INVALIDOPCODE) = 0xff
 		satisfierHex += "ff"
 	}
 	return satisfierHex

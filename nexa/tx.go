@@ -64,7 +64,8 @@ func Int32ToLitteEndianHex(num uint32) string {
 }
 
 func FormatData(hexStr string) string {
-	hexStrFormat := Int8ToHexString(int8(len(hexStr)/2)) + hexStr
+	// hexStrFormat := Int8ToHexString(int8(len(hexStr)/2)) + hexStr
+	hexStrFormat := VarIntToHex(uint64(len(hexStr)/2)) + hexStr
 	// println("hexStrFormat:", hexStrFormat)
 	return hexStrFormat
 }
@@ -136,7 +137,9 @@ func NexaScriptSerialize(signType uint8, scriptHex string) string {
 		//  Opcode.OP_FROMALTSTACK= 108 = 6c, Opcode.OP_CHECKSIGVERIFY= 173 = 0xad
 		return "026cad"
 	}
-	lenHex := Int8ToHexString(int8(len(scriptHex)/2 + 1))
+	// lenHex := Int8ToHexString(int8(len(scriptHex)/2 + 1))
+	lenHex := VarIntToHex(uint64(len(scriptHex)/2 + 1))
+
 	return lenHex + scriptHex + "6cad"
 }
 func NexaP2PKTScriptSerializeSignTypeAll() string {
@@ -280,11 +283,15 @@ func NexaSignTx(inputs []NexaInputOutpoint, outputs []NexaOutput, lockTime uint3
 	signFormat := FormatSignRaw(signHex, pubHex)
 
 	inputsFormat := TxVersion()
-	inputCount := uint8(len(inputs))
-	inputCountHex := Int8ToLittleEndianHexString(inputCount)
+
+	// inputCount := uint8(len(inputs))
+	// inputCountHex := Int8ToLittleEndianHexString(inputCount)
+	inputCount := uint64(len(inputs))
+	inputCountHex := VarIntToHex(inputCount)
+
 	inputsFormat += inputCountHex
 
-	for i := uint8(0); i < inputCount; i++ {
+	for i := uint64(0); i < inputCount; i++ {
 		input := inputs[i]
 		inputsFormat += input.ToHexString()
 		inputsFormat += signFormat
@@ -293,10 +300,14 @@ func NexaSignTx(inputs []NexaInputOutpoint, outputs []NexaOutput, lockTime uint3
 
 	}
 	println("inputsFormat:", inputsFormat)
-	outpuCount := uint8(len(outputs))
-	outpuCountHex := Int8ToLittleEndianHexString(outpuCount)
+	// outpuCount := uint8(len(outputs))
+	// outpuCountHex := Int8ToLittleEndianHexString(outpuCount)
+
+	outpuCount := uint64(len(outputs))
+	outpuCountHex := VarIntToHex(outpuCount)
+
 	outputsFormat := outpuCountHex
-	for i := uint8(0); i < outpuCount; i++ {
+	for i := uint64(0); i < outpuCount; i++ {
 		output := outputs[i]
 		outputsFormat += NexaOuputSerialize(output.OutputType, output.OutputAmount, output.Address)
 	}
@@ -306,7 +317,7 @@ func NexaSignTx(inputs []NexaInputOutpoint, outputs []NexaOutput, lockTime uint3
 	ret += TxLocktime(lockTime)
 
 	//设置输入的解锁脚本
-	for i := 0; i < len(inputs); i++ {
+	for i := uint64(0); i < inputCount; i++ {
 		inputs[i].SignatureScript = FormatSignRawToSigScript(signHex, pubHex)
 	}
 
@@ -391,5 +402,9 @@ func NexaSignTxTest() {
 	txId, txIdem := NexaTxIdAndTxIdem(inputs, outputs, lockTime)
 	println("txId:", txId)
 	println("txIdem:", txIdem)
+	/*
+		txId: 4a5733d194cd9572937b5ef766c35c631301430251f42d24ab343ec150478481
+		txIdem: a87876c510a3823c041db9a04c6925014b8bd82a91862e721b4149d70d5a25c5
+	*/
 
 }
