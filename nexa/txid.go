@@ -42,6 +42,7 @@ func NexaTxIdHash(idemHex string, satisfierHex string) string {
 	return hashHex
 }
 
+// 注意次方法需要在签名交易后调用
 func NexaTxIdAndTxIdem(inputs []NexaInputOutpoint, outputs []NexaOutput, lockTime uint32) (txId string, txIdem string) {
 	txIdemHexHex := NexaTxIdemHex(inputs, outputs, lockTime)
 	// println("txIdemHexHex:", txIdemHexHex)
