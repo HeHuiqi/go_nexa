@@ -9,16 +9,10 @@ import (
 	"github.com/gcash/bchd/chaincfg/chainhash"
 )
 
-func HashReverseHex(hexStr string) []byte {
+func HashReverseHex(hexStr string) string {
 	inBytes, _ := hex.DecodeString(hexStr)
-	HashSize := len(inBytes)
-	dst := make([]byte, HashSize)
-	for i, b := range inBytes[:HashSize/2] {
-		dst[i], dst[HashSize-1-i] = inBytes[HashSize-1-i], b
-	}
-	return dst[:]
+	return hex.EncodeToString(HashReverse(inBytes))
 }
-
 func HashReverse(inBytes []byte) []byte {
 	HashSize := len(inBytes)
 	dst := make([]byte, HashSize)
@@ -94,10 +88,30 @@ func TxOutPoint(preOutPointHex string, outIndex uint8) string {
 
 type NexaInputOutpoint struct {
 	// outpointHex 是返回的utxo中的 outpoint 字段的值，不是txid
-	OutpointHex  string
-	InputType    uint8 //必须是0
-	OutputAmount uint64
-	Sequence     uint32
+	OutpointHex     string
+	InputType       uint8 //必须是0
+	OutputAmount    uint64
+	Sequence        uint32
+	SignatureScript string
+}
+
+func (input *NexaInputOutpoint) ToHexString() string {
+	return TxOutPoint(input.OutpointHex, input.InputType)
+}
+func (input *NexaInputOutpoint) ToIdemHexString() string {
+	idemHex := Int8ToHexString(int8(input.InputType))
+	idemHex += HashReverseHex(input.OutpointHex)
+	idemHex += TxSequence(input.Sequence)
+	idemHex += TxAmountToLitteEndianHex(input.OutputAmount)
+	return idemHex
+}
+func (input *NexaInputOutpoint) SetSignatureScript(sigScript string) {
+	input.SignatureScript = sigScript
+}
+
+func NewInputOutpoint(outpointHex string, inputType uint8, ouputBalance uint64, sequence uint32) NexaInputOutpoint {
+
+	return NexaInputOutpoint{OutpointHex: outpointHex, InputType: inputType, OutputAmount: ouputBalance, Sequence: sequence}
 }
 
 func NexaP2KTScript(address string) (string, string) {
@@ -133,15 +147,6 @@ func NexaP2PKTScriptSerializeSignTypeAll() string {
 
 func NeaxSignTypeAllHex() string {
 	return "00"
-}
-
-func NewInputOutpoint(outpointHex string, inputType uint8, ouputBalance uint64, sequence uint32) NexaInputOutpoint {
-
-	return NexaInputOutpoint{OutpointHex: outpointHex, InputType: inputType, OutputAmount: ouputBalance, Sequence: sequence}
-}
-
-func (input *NexaInputOutpoint) ToHexString() string {
-	return TxOutPoint(input.OutpointHex, input.InputType)
 }
 
 func NexaInputsToHash(inputs []NexaInputOutpoint) string {
@@ -262,6 +267,12 @@ func FormatSignRaw(signHex string, pubHex string) string {
 	ret := FormatData(pubFormat + signFormat)
 	return ret
 }
+func FormatSignRawToSigScript(signHex string, pubHex string) string {
+	pubFormat := FormatData(pubHex)
+	pubFormat = FormatData(pubFormat)
+	signFormat := FormatData(signHex)
+	return pubFormat + signFormat
+}
 func NexaSignTx(inputs []NexaInputOutpoint, outputs []NexaOutput, lockTime uint32, msgHashHex string, priHex string) string {
 	signHex, pubHex := NexaSign(msgHashHex, priHex)
 	println("signHex:", signHex)
@@ -294,6 +305,11 @@ func NexaSignTx(inputs []NexaInputOutpoint, outputs []NexaOutput, lockTime uint3
 	ret := inputsFormat + outputsFormat
 	ret += TxLocktime(lockTime)
 
+	//设置输入的解锁脚本
+	for i := 0; i < len(inputs); i++ {
+		inputs[i].SignatureScript = FormatSignRawToSigScript(signHex, pubHex)
+	}
+
 	return ret
 }
 
@@ -317,14 +333,15 @@ func NexaTxHashTest() {
 }
 
 func NexaSignTxOneInputTest() {
+	// https://explorer.nexa.org/tx/1848efbaee543dd058d3529fcfe95652e149dcff02f820245426703c1c65a975
 	// outpointHex 是返回的utxo中的 outpoint 字段的值，不是txid
 	inputType := uint8(0) //必须是0
 
-	inputAmount := uint64(112 * 100)
+	inputAmount := uint64(130 * 100)
 	feeAmount := uint64(8 * 100)
 	sendAmount := uint64(10 * 100)
 	changeAmount := inputAmount - sendAmount - feeAmount
-	outpointHex := "d280317ac14ff9078bd7602314f9a96590de8da2c9c9fb5b921d96a58c3d7d75"
+	outpointHex := "b7ec98cac00ad2533175632be7885b3433b1fa6a3a2b4076e23c60e344a6ec34"
 	input1 := NewInputOutpoint(outpointHex, inputType, inputAmount, 0xfffffffe)
 	inputs := []NexaInputOutpoint{input1}
 
@@ -334,13 +351,20 @@ func NexaSignTxOneInputTest() {
 
 	//目前使用未来的一个区块高度
 	// lockTime := uint32(253841)
-	lockTime := uint32(255899)
+	// 3c6746ede34e13dce746c049ca7ec53ce63d95bb8b9cfa43e7d8f8e1ae4501de
+	lockTime := uint32(255888)
+	// lockTime := uint32(255899)
 	signType := uint8(0)
 	msgHash := NexaTxHash(inputs, outputs, lockTime, signType)
 
 	priHex := account.GetMainAccount().PrivateKey
 	signTxRaw := NexaSignTx(inputs, outputs, lockTime, msgHash, priHex)
 	println("signTxRaw:", signTxRaw)
+
+	txId, txIdem := NexaTxIdAndTxIdem(inputs, outputs, lockTime)
+	println("txId:", txId)
+	println("txIdem:", txIdem)
+
 }
 
 func NexaSignTxTest() {
